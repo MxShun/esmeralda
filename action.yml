@@ -13,6 +13,9 @@ inputs:
     description: 'number of request reviewers (up to 15).'
     required: false
     default: 15
+  default_label:
+    description: 'request reviewers with constant label.'
+    required: false
   slack_webhook:
     description: 'slack incoming webhook url.'
     required: false
