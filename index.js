@@ -3,11 +3,19 @@ const github = require('@actions/github')
 const { IncomingWebhook } = require('@slack/webhook')
 const fs = require('fs')
 
+const repository = () => {
+  return {
+    owner: github.context.repo.owner,
+    name: github.context.repo.repo,
+  }
+}
+
 const pull_request = () => {
   return {
     number: github.context.payload.pull_request.number,
     title: github.context.payload.pull_request.title,
     url: github.context.payload.pull_request.html_url,
+    author: github.context.payload.pull_request.user.login
   }
 }
 
@@ -15,26 +23,13 @@ const labeled = () => {
   return github.context.payload.label
 }
 
-const pull_request_author = () => {
-  return github.context.payload.pull_request.user.login
-}
-
 const request_reviewers = () => {
+  const default_label = core.getInput('default_label')
   const path = core.getInput('request_reviewers')
   const reviewers = JSON.parse(fs.readFileSync(path, 'utf8'))
-  if (labeled().name in reviewers) {
-    return reviewers[labeled().name]
-  }
-  else {
-    return []
-  }
-}
-
-const repository = () => {
-  return {
-    owner: github.context.repo.owner,
-    name: github.context.repo.repo,
-  }
+  if (default_label) return reviewers[default_label]
+  if (labeled().name in reviewers) return reviewers[labeled().name]
+  return []
 }
 
 const fisher_yates_shuffle = ([...array]) => {
@@ -47,10 +42,10 @@ const fisher_yates_shuffle = ([...array]) => {
 
 const draft_reviewers = () => {
   const number = core.getInput('number_of_reviewers')
-  const validatedNumber = (number >= 0 && number <= 15) ? number : 15
+  const validated_number = (number >= 0 && number <= 15) ? number : 15
   return fisher_yates_shuffle(request_reviewers())
-    .filter(n => n !== pull_request_author())
-    .slice(0, validatedNumber)
+    .filter(n => n !== pull_request().author)
+    .slice(0, validated_number)
 }
 
 const run = async () => {
@@ -82,7 +77,7 @@ const run = async () => {
             "fields": [
               {
                 "type": "mrkdwn",
-                "text": "*Reviewee:*\n" + pull_request_author()
+                "text": "*Reviewee:*\n" + pull_request().author
               },
               {
                 "type": "mrkdwn",
