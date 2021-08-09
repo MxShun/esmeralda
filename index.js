@@ -15,12 +15,9 @@ const pull_request = () => {
     number: github.context.payload.pull_request.number,
     title: github.context.payload.pull_request.title,
     url: github.context.payload.pull_request.html_url,
-    author: github.context.payload.pull_request.user.login
+    author: github.context.payload.pull_request.user.login,
+    label: github.context.payload.label.name
   }
-}
-
-const labeled = () => {
-  return github.context.payload.label
 }
 
 const request_reviewers = () => {
@@ -28,7 +25,7 @@ const request_reviewers = () => {
   const path = core.getInput('request_reviewers')
   const reviewers = JSON.parse(fs.readFileSync(path, 'utf8'))
   if (default_label) return reviewers[default_label]
-  if (labeled().name in reviewers) return reviewers[labeled().name]
+  if (pull_request().label in reviewers) return reviewers[pull_request().label]
   return []
 }
 
@@ -50,6 +47,9 @@ const draft_reviewers = () => {
 
 const run = async () => {
   try {
+    const is_labeled_in_review = pull_request().label.toLowerCase().replace(" ", "") == "inreview"
+    if (!is_labeled_in_review) return
+
     const webhook = core.getInput('slack_webhook')
     const token = core.getInput('github-token')
     const octokit = github.getOctokit(token)
