@@ -654,12 +654,8 @@ const pull_request = () => {
 }
 
 const request_reviewers = () => {
-  const default_label = core.getInput('default_label')
   const path = core.getInput('request_reviewers')
-  const reviewers = JSON.parse(fs.readFileSync(path, 'utf8'))
-  if (default_label) return reviewers[default_label]
-  if (pull_request().label in reviewers) return reviewers[pull_request().label]
-  return []
+  return JSON.parse(fs.readFileSync(path, 'utf8'))
 }
 
 const fisher_yates_shuffle = ([...array]) => {
@@ -671,17 +667,16 @@ const fisher_yates_shuffle = ([...array]) => {
 }
 
 const draft_reviewers = () => {
-  const number = core.getInput('number_of_reviewers')
-  const validated_number = (number >= 0 && number <= 15) ? number : 15
-  return fisher_yates_shuffle(request_reviewers())
-    .filter(n => n !== pull_request().author)
-    .slice(0, validated_number)
+  const reviewers = request_reviewers()
+  const forwards = fisher_yates_shuffle(reviewers["FW"]).filter(n => n !== pull_request().author)
+  const defenders = fisher_yates_shuffle(reviewers["DF"]).filter(n => n !== pull_request().author)
+  return forwards.slice(0, 1).concat(defenders.slice(0, 1))
 }
 
 const run = async () => {
   try {
     const is_labeled_in_review = pull_request().label.toLowerCase().replace(" ", "") == "inreview"
-    if (!is_labeled_in_review) return    
+    if (!is_labeled_in_review) return
 
     const webhook = core.getInput('slack_webhook')
     const token = core.getInput('github-token')
