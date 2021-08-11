@@ -24,7 +24,7 @@ format sample
 
 ### Create `.github/workflows/pr_reviewers.yml`
 
-format sample
+format sample 1: Request a reviewer of labeled team and notify them in Slack
 
 ```yaml
 name: Request Reviewers with Added Label
@@ -44,7 +44,82 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           request_reviewers: .github/workflows/esmeralda/pr_reviewers.json
           number_of_reviewers: 1 # Optional (Default: 15)
-          class_of_reviewers: "team B: 1" # Optional
-          default_label: team B # Optional
+          # class_of_reviewers: # Optional
+          # default_label: # Optional
           slack_webhook: ${{ secrets.SLACK_WEBHOOK_URL }} # Optional
+```
+
+format sample 2: Request up to 15 reviewers of "team B"
+
+```yaml
+name: Request Reviewers with Added Label
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  assign_reviewer_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Assign
+        uses: marty-s-miyake/esmeralda@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          request_reviewers: .github/workflows/esmeralda/pr_reviewers.json
+          # number_of_reviewers: # Optional (Default: 15)
+          # class_of_reviewers: # Optional
+          default_label: team B # Optional
+          # slack_webhook: ${{ secrets.SLACK_WEBHOOK_URL }} # Optional
+```
+
+format sample 2: Request up to 15 reviewers of "team B"
+
+```yaml
+name: Request Reviewers with Added Label
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  assign_reviewer_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Assign
+        uses: marty-s-miyake/esmeralda@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          request_reviewers: .github/workflows/esmeralda/pr_reviewers.json
+          # number_of_reviewers: # Optional (Default: 15)
+          # class_of_reviewers: # Optional
+          default_label: team B # Optional
+          # slack_webhook: ${{ secrets.SLACK_WEBHOOK_URL }} # Optional
+```
+
+format sample 3: Request a reviewer of team A and 2 reviewers of team B
+
+```yaml
+name: Request Reviewers with Added Label
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  assign_reviewer_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Assign
+        uses: marty-s-miyake/esmeralda@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          request_reviewers: .github/workflows/esmeralda/pr_reviewers.json
+          # number_of_reviewers: # Optional (Default: 15)
+          class_of_reviewers: "team A: 1, team B: 2" # Optional
+          # default_label: # Optional
+          # slack_webhook: ${{ secrets.SLACK_WEBHOOK_URL }} # Optional
 ```
