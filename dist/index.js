@@ -653,8 +653,16 @@ const pull_request = () => {
   }
 }
 
-const notify_reviewers = async (webhook, reviewers_slack_id) => {
-  const reviewers = reviewers_slack_id.join("> <@")
+const notify_reviewers = async (webhook, reviewee_slack_id, reviewers_slack_id) => {
+  let reviewee = pull_request().owner
+  if (reviewers_slack_id) {
+    reviewee = "<@" + reviewee_slack_id + ">"
+  }
+
+  let reviewers = ""
+  if (reviewers_slack_id) {
+    reviewers = "<@" + reviewers_slack_id.join(">, <@") + ">"
+  }
 
   await new IncomingWebhook(webhook).send({
     "blocks": [
@@ -670,11 +678,11 @@ const notify_reviewers = async (webhook, reviewers_slack_id) => {
         "fields": [
           {
             "type": "mrkdwn",
-            "text": "*Reviewee:*\n" + pull_request().author
+            "text": "*Reviewee:*\n" + reviewee
           },
           {
             "type": "mrkdwn",
-            "text": "*Reviewers:*\n" + "<@" + reviewers + ">"
+            "text": "*Reviewers:*\n" + reviewers
           }
         ]
       }
@@ -685,6 +693,18 @@ const notify_reviewers = async (webhook, reviewers_slack_id) => {
 const request_reviewers = () => {
   const path = core.getInput('request_reviewers')
   return JSON.parse(fs.readFileSync(path, 'utf8'))
+}
+
+const get_owner_slack_id = () => {
+  const all_reviewers = request_reviewers()
+  let owner_slack_id = null
+
+  Object.values(all_reviewers).forEach(elems => {
+    elems.forEach(elem => {
+      if (elem.name == repository().owner) owner_slack_id = elem.id
+    })
+  })
+  return owner_slack_id
 }
 
 const convert_class_to_map = (class_of_reviewers) => {
@@ -746,6 +766,7 @@ const run = async () => {
     const reviewers = draft_reviewers()
     const reviewers_github_name = reviewers.map(r => r.name)
     const reviewers_slack_id = reviewers.map(r => r.id)
+    const reviewee_slack_id = get_owner_slack_id()
     
     await octokit.pulls.requestReviewers({
       owner: repository().owner,
@@ -755,7 +776,7 @@ const run = async () => {
     })
 
     if (webhook) {
-      notify_reviewers(webhook, reviewers_slack_id)
+      notify_reviewers(webhook, reviewee_slack_id, reviewers_slack_id)
     }
   }
   catch (error) {
