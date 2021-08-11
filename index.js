@@ -55,7 +55,7 @@ const draft_reviewers = () => {
   if (class_of_reviewers) {
     const classes = convert_class_to_map(class_of_reviewers)
     const reviewers = new Array()
-    classes((number, team) => {
+    classes.forEach((number, team) => {
       reviewers.push(fisher_yates_shuffle(request_reviewers()[team])
         .filter(n => n !== pull_request().author)
         .slice(0, number)
