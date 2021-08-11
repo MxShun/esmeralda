@@ -10,7 +10,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Assign
-        uses: MxShun@add/class-of-reviewers
+        uses: MxShun/esmeralda@add/class-of-reviewers
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           request_reviewers: .github/workflows/pr_reviewers.json
