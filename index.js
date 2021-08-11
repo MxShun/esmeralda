@@ -66,7 +66,7 @@ const run = async () => {
             "type": "section",
             "text": {
               "type": "mrkdwn",
-              "text": "*<" + pull_request().url + "|" + pull_request().title + ">*"
+              "text": core.getInput('class_of_reviewers') + " of " + typeof core.getInput('class_of_reviewers')
             }
           },
           {

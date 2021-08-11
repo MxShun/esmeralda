@@ -1,0 +1,20 @@
+name: Request Reviewers with Added Label
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  assign_reviewer_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Assign
+        uses: MxShun@add/class-of-reviewers
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          request_reviewers: .github/workflows/pr_reviewers.json
+          number_of_reviewers: 2
+          class_of_reviewers: { "team A": 1, "team B": 1 }
+          # default_label: team B
+          slack_webhook: ${{ secrets.SLACK_WEBHOOK_URL }} # Optional
