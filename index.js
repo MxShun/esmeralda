@@ -20,6 +20,33 @@ const pull_request = () => {
   }
 }
 
+const notify_reviewers = async (webhook, reviewers) => {
+  await new IncomingWebhook(webhook).send({
+    "blocks": [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*<" + pull_request().url + "|" + pull_request().title + ">*"
+        }
+      },
+      {
+        "type": "section",
+        "fields": [
+          {
+            "type": "mrkdwn",
+            "text": "*Reviewee:*\n" + pull_request().author
+          },
+          {
+            "type": "mrkdwn",
+            "text": "*Reviewers:*\n" + reviewers
+          }
+        ]
+      }
+    ]
+  })
+}
+
 const request_reviewers = () => {
   const path = core.getInput('request_reviewers')
   return JSON.parse(fs.readFileSync(path, 'utf8'))
@@ -56,10 +83,10 @@ const draft_reviewers = () => {
   if (class_of_reviewers) {
     const classes = convert_class_to_map(class_of_reviewers)
     const reviewers_of_class = new Array()
-    classes.forEach((number, team) => {
+    classes.forEach((num, team) => {
       reviewers_of_class.push(fisher_yates_shuffle(all_reviewers[team])
         .filter(n => n !== pull_request().author)
-        .slice(0, number)
+        .slice(0, num)
       )
     })
     return reviewers_of_class.flat()
@@ -90,30 +117,7 @@ const run = async () => {
     })
 
     if (webhook) {
-      await new IncomingWebhook(webhook).send({
-        "blocks": [
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": "*<" + pull_request().url + "|" + pull_request().title + ">*"
-            }
-          },
-          {
-            "type": "section",
-            "fields": [
-              {
-                "type": "mrkdwn",
-                "text": "*Reviewee:*\n" + pull_request().author
-              },
-              {
-                "type": "mrkdwn",
-                "text": "*Reviewers:*\n" + reviewers
-              }
-            ]
-          }
-        ]
-      })
+      notify_reviewers(webhook, reviewers)
     }
   }
   catch (error) {
