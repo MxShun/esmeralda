@@ -11,13 +11,15 @@ format sample
 ```json
 {
   "label name": [
-    "Request Reviewer Name"
+    {"name": "Request Reviewer Name", "id": "Slack ID"}
   ],
   "team A": [
-    "Alice", "Angel"
+    {"name": "Alice", "id": "U01E1234H01"},
+    {"name": "Angel", "id": "U01E1235H02"}
   ],
   "team B": [
-    "Bob", "Bobby"
+    {"name": "Bob", "id": "U01E1235H03"},
+    {"name": "Bobby", "id": "U01E1235H04"}
   ]
 }
 ```
