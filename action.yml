@@ -13,6 +13,9 @@ inputs:
     description: 'number of request reviewers (up to 15).'
     required: false
     default: 15
+  class_of_reviewers:
+    description: 'map formatted class of request reviewers.'
+    required: false
   default_label:
     description: 'request reviewers with constant label.'
     required: false
