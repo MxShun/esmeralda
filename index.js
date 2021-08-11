@@ -20,7 +20,9 @@ const pull_request = () => {
   }
 }
 
-const notify_reviewers = async (webhook, reviewers) => {
+const notify_reviewers = async (webhook, reviewers_slack_id) => {
+  const reviewers = reviewers_slack_id.join("> <@")
+
   await new IncomingWebhook(webhook).send({
     "blocks": [
       {
@@ -39,7 +41,7 @@ const notify_reviewers = async (webhook, reviewers) => {
           },
           {
             "type": "mrkdwn",
-            "text": "*Reviewers:*\n" + reviewers
+            "text": "*Reviewers:*\n" + "<@" + reviewers + ">"
           }
         ]
       }
@@ -108,16 +110,18 @@ const run = async () => {
     const token = core.getInput('github-token')
     const octokit = github.getOctokit(token)
     const reviewers = draft_reviewers()
+    const reviewers_github_name = reviewers.map(any => any.split(":")[0].trim())
+    const reviewers_slack_id = reviewers.map(any => any.split(":")[1].trim())
 
     await octokit.pulls.requestReviewers({
       owner: repository().owner,
       repo: repository().name,
       pull_number: pull_request().number,
-      reviewers: reviewers
+      reviewers: reviewers_github_name
     })
 
     if (webhook) {
-      notify_reviewers(webhook, reviewers)
+      notify_reviewers(webhook, reviewers_slack_id)
     }
   }
   catch (error) {
