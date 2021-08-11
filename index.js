@@ -65,7 +65,7 @@ const draft_reviewers = () => {
   }
 
   // 優先度低: ラベル名に属するレビュアーを number_of_reviewers 人指定
-  if (pull_request().label in reviewers) {
+  if (pull_request().label in request_reviewers()) {
     return fisher_yates_shuffle(request_reviewers()[pull_request().label])
       .filter(n => n !== pull_request().author)
       .slice(0, validated_number)
