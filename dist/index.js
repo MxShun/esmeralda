@@ -742,14 +742,11 @@ const run = async () => {
     const webhook = core.getInput('slack_webhook')
     const token = core.getInput('github-token')
     const octokit = github.getOctokit(token)
-    const reviewers = new Map(draft_reviewers())
-    const reviewers_github_name = new Array()
-    const reviewers_slack_id = new Array()
-    reviewers.forEach((id, name) => {
-      reviewers_github_name.push(name)
-      reviewers_slack_id.push(id)
-    })
 
+    const reviewers = draft_reviewers()
+    const reviewers_github_name = reviewers.map(r => r.name)
+    const reviewers_slack_id = reviewers.map(r => r.id)
+    
     await octokit.pulls.requestReviewers({
       owner: repository().owner,
       repo: repository().name,
