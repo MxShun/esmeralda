@@ -55,14 +55,14 @@ const draft_reviewers = () => {
   const class_of_reviewers = core.getInput('class_of_reviewers')
   if (class_of_reviewers) {
     const classes = convert_class_to_map(class_of_reviewers)
-    const reviewers_of_class = []
+    const reviewers_of_class = new Array()
     classes.forEach((number, team) => {
       reviewers_of_class.push(fisher_yates_shuffle(all_reviewers[team])
         .filter(n => n !== pull_request().author)
         .slice(0, number)
       )
     })
-    return reviewers_of_class
+    return reviewers_of_class.flat()
   }
 
   // 優先度低: ラベル名に属するレビュアーを number_of_reviewers 人指定
