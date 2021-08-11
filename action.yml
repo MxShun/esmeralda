@@ -14,7 +14,7 @@ inputs:
     required: false
     default: 15
   class_of_reviewers:
-    description: 'map formatted class of request reviewers.'
+    description: 'class of request reviewers formatted like "team A: 1, team B: 2".'
     required: false
   default_label:
     description: 'request reviewers with constant label.'
