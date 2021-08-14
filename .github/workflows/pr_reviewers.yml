@@ -5,13 +5,13 @@ on:
 
 jobs:
   assign_reviewer_job:
+    if: contains(github.event.pull_request.labels.*.name, 'team A')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Assign
-        if: github.event.pull_request.labels.*.name == 'TEST'
-        uses: MxShun/esmeralda@test/specific-label
+        uses: MxShun/esmeralda@2.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           request_reviewers: .github/workflows/pr_reviewers.json
