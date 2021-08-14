@@ -16,6 +16,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           request_reviewers: .github/workflows/pr_reviewers.json
           # number_of_reviewers: # Optional (Default: 15)
-          class_of_reviewers: "team A: 3, team B: 3"
+          # class_of_reviewers: "team A: 3, team B: 3"
           # default_label: team A # Optional
           # slack_webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
