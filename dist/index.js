@@ -697,11 +697,11 @@ const request_reviewers = () => {
 
 const get_owner_slack_id = () => {
   const all_reviewers = request_reviewers()
-  let owner_slack_id = null
+  let owner_slack_id = pull_request().author
 
   Object.values(all_reviewers).forEach(elems => {
     elems.forEach(elem => {
-      if (elem.name == repository().owner) owner_slack_id = elem.id
+      if (elem.name == pull_request().author) owner_slack_id = elem.id
     })
   })
   return owner_slack_id
