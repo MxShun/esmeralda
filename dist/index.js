@@ -729,7 +729,7 @@ const draft_reviewers = () => {
   // 優先度高: default_label が設定されていれば、その中で number_of_reviewers 人を指定
   if (default_label) {
     return fisher_yates_shuffle(all_reviewers[default_label])
-      .filter(n => n !== pull_request().author)
+      .filter(n => n.name !== pull_request().author)
       .slice(0, validated_number)
   }
 
@@ -740,7 +740,7 @@ const draft_reviewers = () => {
     const reviewers_of_class = new Array()
     classes.forEach((num, team) => {
       reviewers_of_class.push(fisher_yates_shuffle(all_reviewers[team])
-        .filter(n => n !== pull_request().author)
+        .filter(n => n.name !== pull_request().author)
         .slice(0, num)
       )
     })
@@ -750,7 +750,7 @@ const draft_reviewers = () => {
   // 優先度低: ラベル名に属するレビュアーを number_of_reviewers 人指定
   if (pull_request().label in all_reviewers) {
     return fisher_yates_shuffle(all_reviewers[pull_request().label])
-      .filter(n => n !== pull_request().author)
+      .filter(n => n.name !== pull_request().author)
       .slice(0, validated_number)
   }
 
