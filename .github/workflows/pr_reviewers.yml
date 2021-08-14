@@ -12,8 +12,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Assign
         uses: MxShun/esmeralda@test/specific-label
-        with:
+        with:          
           github-token: ${{ secrets.GITHUB_TOKEN }}
           request_reviewers: .github/workflows/pr_reviewers.json
-          class_of_reviewers: "team A: 1, team B: 2"
-          slack_webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          # number_of_reviewers: # Optional (Default: 15)
+          # class_of_reviewers: "team A: 1, team B: 2"
+          default_label: team A # Optional
+          # slack_webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
