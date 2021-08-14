@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Assign
-        uses: MxShun/esmeralda@2.0.0
+        uses: MxShun/esmeralda@feature/slack-mention
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           request_reviewers: .github/workflows/pr_reviewers.json
